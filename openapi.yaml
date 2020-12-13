@@ -1,0 +1,142 @@
+openapi: 3.0.1
+info:
+  title: API Test Schema
+  description: Schema for a sample REST API.
+  contact:
+    email: joey.whelan@gmail.com
+  version: 1.0.0
+servers:
+- url: http://localhost:8888
+tags:
+- name: page
+  description: Notional web page
+paths:
+  /page:
+    post:
+      tags:
+      - page
+      summary: Create a new page
+      requestBody:
+        description: Page object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+        required: true
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnVal'
+        400:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObj'
+      x-codegen-request-body-name: body
+  /page/{pageId}:
+    delete:
+      tags:
+      - page
+      summary: Deletes a page
+      parameters:
+      - name: pageId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageId:
+                    type: string
+                    example: deleted
+        404:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObj'
+  /page/{pageId}/hitCount:
+    get:
+      tags:
+      - page
+      summary: Get the hit count for a given page
+      description: Fetch hit count
+      parameters:
+      - name: pageId
+        in: path
+        description: Name of page
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnVal'
+        404:
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObj'
+    patch:
+      tags:
+      - page
+      summary: Increment hit count
+      description: Increment hit counter for a given page
+      parameters:
+      - name: pageId
+        in: path
+        description: Name of page
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnVal'
+        404:
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObj'
+components:
+  schemas:
+    Page:
+      required:
+      - pageId
+      type: object
+      properties:
+        pageId:
+          type: string
+          example: testpage
+    ReturnVal:
+      type: object
+      properties:
+        pageId:
+          type: string
+          example: testpage
+        hitCount:
+          type: integer
+          format: int64
+    ErrorObj:
+      type: object
+      properties:
+        error:
+          type: string
